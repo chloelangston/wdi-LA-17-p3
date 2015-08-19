@@ -1,4 +1,8 @@
 var client = new Faye.Client('/faye');
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
 function initialize() {
   // Create the Google Map…
   var latlng = new google.maps.LatLng(0, 0); //this numbers sets the lat and long of the center of the map. UK 54, -4
@@ -8,10 +12,19 @@ function initialize() {
     , mapTypeId: google.maps.MapTypeId.ROADMAP //ROADMAP can also be SATELLITE, HYBRID, or TERRAIN
   };
   var map = new google.maps.Map(document.getElementById("map"), myOptions);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> upstream/master
   // Load the station data. When the data comes back, create an overlay.
   client.subscribe('/tweet', function(data) {
     // console.log(data);
     var overlay = new google.maps.OverlayView();
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
     // Add the container when the overlay is added to the map.
     overlay.onAdd = function() {
       var layer = d3.select(this.getPanes().overlayLayer).append("div")
@@ -21,6 +34,10 @@ function initialize() {
       overlay.draw = function() {
         var projection = this.getProjection(),
         padding = 10;
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
         var marker = layer.selectAll("svg")
         .data(d3.entries(data.coordinates))
         .each(transform) // update existing markers

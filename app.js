@@ -1,3 +1,4 @@
+require('dotenv').load()
 var ntwitter 	= require('ntwitter');
 var express 	= require('express');
 var	faye	 		= require('faye');
@@ -5,12 +6,14 @@ var	http 			= require('http');
 var logger 		=	require('morgan');
 var bcrypt 		= require('bcrypt');
 var User      = require('./models/user');
-
-
+var usersController = require('./controller/usersController');
+var methodOverride = require('method-override');
 
 // set up mongoose and db-related
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/cpsdb');
+// mongoose.connect('mongodb://localhost/cpsdb');
+// mongoose.connect('mongodb://'<dbuser>':<dbpassword>@ds033113.mongolab.com:33113/heroku_c39vv1nx')
+mongoose.connect('mongodb://'+process.env.MONGODBUSER+':'+process.env.MONGODBPASS+'@ds033113.mongolab.com:33113/heroku_c39vv1nx')
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error: "));
 db.once('connected. rejoice.', function(callback){console.log('connected to mongo')});
@@ -28,12 +31,13 @@ app.use(logger('dev'));
 // parse incoming json
 app.use(bodyParser.json());
 
+//// ROUTES
 // create an instance for the API routes
 var apiRouter = express.Router();
-console.log(apiRouter);
+	console.log(apiRouter);
 
 apiRouter.use(function(req, res, next){
-	console.log("Someone was here. Slay.");
+	console.log(req);
 	next();
 })
 
@@ -42,98 +46,19 @@ apiRouter.get('/', function(req,res){
 })
 
 apiRouter.route('/users')
-.post(function(req, res){
-	var user = new User(req.body.user);
-	// save the user and check for errors
-	user.save(function(err){
-		if(err){
-			return res.status(401).send({message: err.errmsg});
-		}
-		else{
-			return res.status(200).send({message: 'user has been created. rejoice!'});
-		}
-	})
-})
-.get(function(req, res){
-	User.find({}, function(err, users){
-		if(err) return res.status(401).send({message: err.errmsg});
-			res.json(users);
-	});
-});
+	.post(usersController.createUser)
+	.get(usersController.showUsers)
 
 apiRouter.route('/users/:id')
-	.get(function(req, res){
-		User.findOne({_id: req.params.id}, function(err,user){
-			if(err) res.json({message: "Error w ID"});
-				res.json(user)
-		})
-	})
-
-.patch(function(req,res){
-	console.log(req);
-	User.findOneAndUpdate({_id: req.params.id}, req.body.user, function(err, users){
-		if (err){
-			console.log(err);
-			res.json({message: "Update error. Try again. Logging reqbodyuser " + req.body.user})
-			return
-		} else {
-			res.json({message: "User has been updated"});
-			console.log("User updated");
-			console.log(req.body.params + "this is what is supposed to be updated");
-		}
-	})
-})
-
+	.get(usersController.findUser)
+	.patch(usersController.editUser)
+	.delete(usersController.deleteUser)
 
 // REGISTER THE API ROUTE - all routes using the apiRouter will be prefied with /api
-app.use('/api', apiRouter);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	app.use('/api', apiRouter);
 
 // set up nTwitter with the api configuration in ./config.js
+
 var config = require('./config.js'),
 	twit = new ntwitter(config);
 
@@ -172,7 +97,7 @@ twit.stream('statuses/filter', filterParams, function(_stream) {
 	Output every tweet to the console
 */
 stream.on('data', function(data){
-	console.log(data.text + data.geo);
+	console.log(data);
 });
 
 
@@ -216,6 +141,8 @@ stream.on('data', function(data){
 
 
 // start the app listening on port 3000 with faye attached
+
+
 var server = http.createServer(app);
 bayeux.attach(server);
 server.listen(3000);
