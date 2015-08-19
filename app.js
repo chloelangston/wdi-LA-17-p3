@@ -141,21 +141,15 @@ var config = require('./config.js'),
 /*
 	The streaming search parameters, info at:
 		https://dev.twitter.com/docs/api/1.1/post/statuses/filter
-
 	Examples:
-
 	UK
 		{locations:'-10.371,48.812,2.192,60.892'}
-
 	San Francisco + New York
 		{locations:'-122.75,36.8,-121.75,37.8,-74,40,-73,41'}
-
 	Any Geotagged tweet
 		{locations:'-180,-90,180,90'}
-
 	Tweets mentioning pizza or burger
 		{track:'pizza,burger'}
-
 */
 var filterParams = {locations:'-180,-90,180,90'}; // -10.371,48.812,2.192,60.892 UK
 
@@ -198,16 +192,27 @@ var bayeux = new faye.NodeAdapter({
 	When a tweet comes through with geodata, publish it to the
 	browser over the /tweet channel
 */
-var streamData = []
 stream.on('data', function(data){
-	if(data.geo)
+	if(data.coordinates && data.coordinates.coordinates){
 		bayeux.getClient()
 			.publish('/tweet', {
-				geo: data.geo,
+				coordinates: data.coordinates.coordinates,
+				screen_name: data.user.screen_name,
 				text: data.text,
-
-			} );
+				pic: data.user.profile_image_url
+			});
+	} else if(data.place){
+	  var place = data.place.bounding_box.coordinates[0][0];
+	   bayeux.getClient()
+			 .publish('/tweet', {
+	        coordinates: place,
+	      	screen_name: data.user.screen_name,
+	      	text: data.text,
+	      	pic: data.user.profile_image_url
+	    });
+	}
 });
+
 
 
 // start the app listening on port 3000 with faye attached
