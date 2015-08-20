@@ -11,7 +11,9 @@ var User = require('../models/user.js');
   			return res.status(401).send({message: err.errmsg});
   		}
   		else{
-  			return res.status(200).send({message: 'user has been created. rejoice!'});
+
+  			res.status(200).send({message: 'user has been created. rejoice!'});
+        res.redirect('/');
   		}
   	})
   }
