@@ -128,12 +128,15 @@ io.on('connect', function(socket){   //io.on is checking for someone to connect.
   stream = twitter.stream('statuses/filter', {track: searchTerm});
 
 	stream.on('tweet', function(tweet){ //this line and above are server side
+		console.log(tweet);
 	  if(tweet.coordinates && tweet.coordinates.coordinates){
 			var data = {};
 			data.coordinates = tweet.coordinates.coordinates;
 			data.screen_name = tweet.user.screen_name;
 			data.text = tweet.text;
 			data.pic = tweet.user.profile_image_url;
+			data.followers_count = tweet.user.followers_count;
+			data.retweet_count = tweet.retweet_count;
 			socket.emit('tweets', data);  //sending info back to the client
 		} else if(tweet.place) {
 	  	var place = tweet.place.bounding_box.coordinates[0][0];
@@ -142,6 +145,7 @@ io.on('connect', function(socket){   //io.on is checking for someone to connect.
     	data.screen_name = tweet.user.screen_name;
     	data.text = tweet.text;
     	data.pic = tweet.user.profile_image_url;
+			data.followers_count = tweet.user.followers_count;
 			socket.emit('tweets', data);  //sending info back to the client
 	  }
 	});

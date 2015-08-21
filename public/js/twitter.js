@@ -4,7 +4,7 @@ $(function (){
     console.log('Connected!');
   });
   socket.on('tweets', function(tweet) {
-    console.log(tweet);
+    // console.log(tweet);
     var html = '<div class="row"><div class="col-md-6 col-md-offset-3 tweet"><img src="' + tweet.pic + '" class="avatar pull-left"/><div class="names"><span class="full-name">' + tweet.screen_name + ' </span><span class="username">@' +tweet.screen_name + '</span></div><div class="contents"><span class="text">' + tweet.text + '</span></div></div></div>';
     $('#tweet-container').prepend(html);
   });
