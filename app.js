@@ -135,17 +135,20 @@ io.on('connect', function(socket){   //io.on is checking for someone to connect.
       data.screenName = tweet.user.screen_name;
       data.statusesCount = tweet.user.statuses_count;
       data.favouritesCount = tweet.user.favourites_count;
+
       var newTweet = new TweetStream(data)
       newTweet.save(function(err){
         if(!err){
           socket.emit('tweets', data);  //sending info back to the client
         }
       });
-    console.log(searchTerm +'booooooom');
-    console.log(tweet.place.country);
 	  }
 	});
   });
+
+
+
+
   //SETS UP TO SHOW ALL TWEETS
   socket.on('showAll', function(){
     socket.emit('showAll');
@@ -162,6 +165,7 @@ io.on('connect', function(socket){   //io.on is checking for someone to connect.
         var data = {};
         data.coordinates = tweet.coordinates.coordinates;
         data.screen_name = tweet.user.screen_name;
+        data.followersCount = tweet.user.followers_count;
         data.text = tweet.text;
         data.pic = tweet.user.profile_image_url;
         socket.emit('tweets', data);  //sending info back to the client
@@ -170,6 +174,7 @@ io.on('connect', function(socket){   //io.on is checking for someone to connect.
         var place = tweet.place.bounding_box.coordinates[0][0];
         var data = {};
         data.coordinates = place;
+        data.followersCount = tweet.user.followers_count;
         data.screen_name = tweet.user.screen_name;
         data.text = tweet.text;
         data.pic = tweet.user.profile_image_url;
