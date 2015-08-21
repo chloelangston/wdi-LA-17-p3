@@ -87,13 +87,18 @@ function initialize() {
 
         .style("fill-opacity", 0.4)
         .transition().remove()
-        .attr("r", function(d){
-          return scale(data.followersCount);
+
+        // .attr("r", function(d){
+        //   return scale(data.followersCount);
 
           // if(data.followers_count > 200) return 14;
           // else return 4;
+        // })
+        .style("fill", function(d){
+          if(data.followersCount > 1000) return "rgb(100, 255, 255)"
+          else return "red"
         })
-        .style("fill", "rgb(100, 255, 255)").style("fill-opacity", 0.4).duration(3000)
+        .style("fill-opacity", 0.4).duration(3000)
         .style("opacity", 0).duration(3000);
 
 
