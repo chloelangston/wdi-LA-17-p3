@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <h2>Screen_name: luvisa_</h2>
   <meta charset="utf-8">
   <title>d3</title>
   <style media="screen">
+  h2{
+    color: white;
+  }
   div.bar {
     display: inline-block;
     width: 20px;
@@ -34,8 +38,8 @@
 
     <script type="text/javascript">
     d3.select("body").style("background-color", "black");
-    var h = 200;
-    var w = 200;
+    var h = 300;
+    var w = 300;
     var dataset = [ 100, 70, 80 ];
     var svg = d3.select("body")
                 .append("svg")
@@ -53,15 +57,31 @@
         .attr("y", function(d){
           return h;
         })
-        .attr("width", 60)
-        .attr("height", 100)
+        .attr("width", 80)
+        .attr("height", 150)
         .attr("padding", 3)
-        .style("fill", "white")
+        .style("fill", "rgb(50, 255, 50)")
         .transition()
         .attr("y", function(d){
           return (h-d);
         })
         .delay(1000)
+
+    svg.selectAll("text")
+        .data(dataset)
+        .enter()
+        .append("text")
+        .text(function(d){
+          return d
+        })
+        .attr("x", function(d, i) {
+          return i * (w / dataset.length);
+        })
+        .attr("y", function(d){
+          return h-(d+5);
+        })
+        .attr("font-size", "200px")
+        .attr("fill", "white")
 
 
         var width = 500,
@@ -71,12 +91,14 @@
         var color = d3.scale.category20();
 
         var pie = d3.layout.pie()
-            .value(function(d) { return d.apples; })
+            .value(function(d) { return d.number; })
             .sort(null);
 
         var arc = d3.svg.arc()
             .innerRadius(radius - 100)
             .outerRadius(radius - 20);
+
+
 
         var svg = d3.select("body").append("svg")
             .attr("width", width)
@@ -97,7 +119,7 @@
               .on("change", change);
 
           var timeout = setTimeout(function() {
-            d3.select("input[value=\"oranges\"]").property("checked", true).each(change);
+            d3.select("input[value=\"number2\"]").property("checked", true).each(change);
           }, 2000);
 
           function change() {
@@ -110,8 +132,8 @@
         });
 
         function type(d) {
-          d.apples = +d.apples;
-          d.oranges = +d.oranges;
+          d.number = +d.number;
+          d.number2 = +d.number2;
           return d;
         }
 

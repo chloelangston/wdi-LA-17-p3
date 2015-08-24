@@ -79,7 +79,10 @@ function initialize() {
         .attr("r", 0)
         .attr("cx", padding)
         .attr("cy", padding)
-        .style("fill", "rgb(50, 255, 150)")
+        .style("fill", function(d){
+          if(data.followersCount > 1000) return "orange";
+          else return "rgb(50, 255, 150)"
+        })
         // function(d){
         //   if(data.followers_count > 1) return "red";
         //   else return "blue";
@@ -87,7 +90,7 @@ function initialize() {
 
         .style("fill-opacity", 0.4)
         .transition().remove()
-
+        .attr("r", 14)
         // .attr("r", function(d){
         //   return scale(data.followersCount);
 
@@ -95,8 +98,8 @@ function initialize() {
           // else return 4;
         // })
         .style("fill", function(d){
-          if(data.followersCount > 1000) return "rgb(100, 255, 255)"
-          else return "red"
+          if(data.followersCount > 1000) return "red";
+          else return "rgb(100, 255, 255)";
         })
         .style("fill-opacity", 0.4).duration(3000)
         .style("opacity", 0).duration(3000);

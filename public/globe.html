@@ -1,28 +1,36 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.js"></script>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/twitter.js"></script>
-    <script src="/js/globe.js"></script>
-    <script src="https://www.webglearth.com/v2/api.js"></script>
-    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="http://www.webglearth.com/v2/api.js"></script>
+    <script type="text/javascript" src="/faye.js"></script>
+
     <style>
       html, body{padding: 0; margin: 0; background-color: black;}
       #earth_div{top: 0; right: 0; bottom: 0; left: 0; position: absolute !important;}
     </style>
     <title>WebGL Earth API: Markers</title>
   </head>
-  <body onload="initialize()">
-    <h1>Twitter Stream</h1>
-    <form action="/globe.html" name="search">
-    <div class="form-group">
-      <input type="text" class="form-control" placeholder="Enter search word(s) here. (e.g: pizza, burger)">
-    </div>
-    <input type="submit" class="btn btn-default">
-    <button type="button" name="button" id="allTweets">All Tweets</button>
-    </form>
+
+  <body>
     <div id="earth_div"></div>
+    <script>
+    var client = new Faye.Client('/faye');
+        var earth = new WE.map('earth_div');
+        WE.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(earth);
+
+        var marker = WE.marker([51.5, -0.09]).addTo(earth);
+        marker.bindPopup("<b>Hello world!</b><br>I am a popup.<br /><span style='font-size:10px;color:#999'>Tip: Another popup is hidden in Cairo..</span>", {maxWidth: 150, closeButton: true}).openPopup();
+
+        var markerCustom = WE.marker([50, -9], '/img/logo-webglearth-white-100.png', 100, 24).addTo(earth);
+
+        earth.setView([51.505, 0], 6);
+
+
+      client.subscribe('/tweet', function(data) {
+        var marker = WE.marker(data.coordinates).addTo(earth);
+        console.log(data);
+        marker.bindPopup("<b>"+ data.screen_name +"</b><br><br /><span style='font-size:10px;color:#999'>"+data.text+"</span>", {maxWidth: 150, closeButton: true}).openPopup();
+      });
+    </script>
   </body>
 </html>
